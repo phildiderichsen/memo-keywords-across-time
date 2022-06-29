@@ -1,3 +1,8 @@
+rdata/
+corpustxts/
+rsconnect/
+
+
 # History files
 .Rhistory
 .Rapp.history
@@ -37,3 +42,4 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
