@@ -26,12 +26,11 @@ make_wordcloud <- function(loglikdata) {
     #dev.off()
 }
 
-targetbrowse <- function(df, refmax, refmin, trgmax, trgmin, blacklist, remove_names) {
-    df <- df[df$R.count <= refmax & df$R.count >= refmin & df$T.count <= trgmax & df$T.count >= trgmin &
-           !df$term %in% blacklist, ]
-    if (remove_names) {
-        df <- df[!df$term %in% namelist, ]
-    }
+targetbrowse <- function(df, refmax, refmin, trgmax, trgmin, remove_names, blacklist, whitelist) {
+    df <- df[df$R.count <= refmax & df$R.count >= refmin & df$T.count <= trgmax & df$T.count >= trgmin, ]
+    if (remove_names) { df <- df[!df$term %in% namelist, ] }
+    if (length(blacklist) > 0) { df <- df[!df$term %in% blacklist, ] }
+    if (length(whitelist) > 0) { df <- df[df$term %in% whitelist, ] }
     df
 } 
 
@@ -60,8 +59,12 @@ ui <- fluidPage(
         
         column(4, textAreaInput("textarea1",
                               "Blacklist:",
-                              rows = 5,
-                              cols = 80))
+                              rows = 2,
+                              cols = 80),
+               textAreaInput("textarea2",
+                             "Whitelist:",
+                             rows = 2,
+                             cols = 80))
     ),
 
     fluidRow(
@@ -104,6 +107,7 @@ server <- function(input, output) {
     trgmax <- reactive({ round(exp(input$slider2[2])) })
 
     blacklist <- reactive({ unlist(strsplit(input$textarea1, split = "\\s+", perl = TRUE)) })
+    whitelist <- reactive({ unlist(strsplit(input$textarea2, split = "\\s+", perl = TRUE)) })
     
     remove_names <- reactive({ input$checkbox1 })
     
@@ -113,37 +117,37 @@ server <- function(input, output) {
     output$wordcloudPlot1 <- renderPlot({
         # draw wordcloud
         par(mar = rep(0, 4))
-        make_wordcloud(targetbrowse(signifdata$`1870-1874`, refmax(), refmin(), trgmax(), trgmin(), blacklist(), remove_names()))
+        make_wordcloud(targetbrowse(signifdata$`1870-1874`, refmax(), refmin(), trgmax(), trgmin(), remove_names(), blacklist(), whitelist()))
     })
 
     output$wordcloudPlot2 <- renderPlot({
         # draw wordcloud
         par(mar = rep(0, 4))
-        make_wordcloud(targetbrowse(signifdata$`1875-1879`, refmax(), refmin(), trgmax(), trgmin(), blacklist(), remove_names()))
+        make_wordcloud(targetbrowse(signifdata$`1875-1879`, refmax(), refmin(), trgmax(), trgmin(), remove_names(), blacklist(), whitelist()))
     })
     
     output$wordcloudPlot3 <- renderPlot({
         # draw wordcloud
         par(mar = rep(0, 4))
-        make_wordcloud(targetbrowse(signifdata$`1880-1884`, refmax(), refmin(), trgmax(), trgmin(), blacklist(), remove_names()))
+        make_wordcloud(targetbrowse(signifdata$`1880-1884`, refmax(), refmin(), trgmax(), trgmin(), remove_names(), blacklist(), whitelist()))
     })
     
     output$wordcloudPlot4 <- renderPlot({
         # draw wordcloud
         par(mar = rep(0, 4))
-        make_wordcloud(targetbrowse(signifdata$`1885-1889`, refmax(), refmin(), trgmax(), trgmin(), blacklist(), remove_names()))
+        make_wordcloud(targetbrowse(signifdata$`1885-1889`, refmax(), refmin(), trgmax(), trgmin(), remove_names(), blacklist(), whitelist()))
     })
     
     output$wordcloudPlot5 <- renderPlot({
         # draw wordcloud
         par(mar = rep(0, 4))
-        make_wordcloud(targetbrowse(signifdata$`1890-1894`, refmax(), refmin(), trgmax(), trgmin(), blacklist(), remove_names()))
+        make_wordcloud(targetbrowse(signifdata$`1890-1894`, refmax(), refmin(), trgmax(), trgmin(), remove_names(), blacklist(), whitelist()))
     })
     
     output$wordcloudPlot6 <- renderPlot({
         # draw wordcloud
         par(mar = rep(0, 4))
-        make_wordcloud(targetbrowse(signifdata$`1895-1899`, refmax(), refmin(), trgmax(), trgmin(), blacklist(), remove_names()))
+        make_wordcloud(targetbrowse(signifdata$`1895-1899`, refmax(), refmin(), trgmax(), trgmin(), remove_names(), blacklist(), whitelist()))
     })
     
     output$data1 <- renderPrint({signifdata$`1870-1874`})
